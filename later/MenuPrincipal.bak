@@ -1,0 +1,61 @@
+
+package src.view;
+
+import src.model.EventoModel;
+import src.model.Evento;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
+public class MenuPrincipal extends JFrame {
+    
+    public static List<Evento> eventos;
+
+    public MenuPrincipal() {
+        setTitle("Gestor de Eventos");
+        setSize(640, 480);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        eventos = EventoModel.cargarEventos();
+        for (Evento evento : eventos) {
+            System.out.println(evento);
+        }
+
+        JPanel buttonsPanel = new JPanel(new GridLayout(4,1,10,10));
+        buttonsPanel.setBackground(Color.WHITE);
+        
+        JButton btnGestionDeEventos = new JButton("Gestion de Eventos");
+        btnGestionDeEventos.setBackground(Color.WHITE);
+        btnGestionDeEventos.setForeground(Color.BLACK);
+        // btnGestionDeEventos.addActionListener(e -> new MenuGestionEventos().setVisible(true));
+
+        // JButton btnGestionDeUbicaciones = new JButton("Gestion de Ubicaciones");
+        // btnGestionDeUbicaciones.setBackground(Color.WHITE);
+        // btnGestionDeUbicaciones.setForeground(Color.BLACK);
+        // btnGestionDeUbicaciones.setSize(100, 100);
+        // btnGestionDeUbicaciones.setBorder(BorderFactory.create);
+
+        // btnGestionDeUbicaciones.addActionListener(e -> new MenuGestionUbicaciones().setVisible(true));
+
+        buttonsPanel.add(btnGestionDeEventos);
+        // buttonsPanel.add(btnGestionDeUbicaciones);
+
+        JPanel backgroundPanel = new JPanel(new GridLayout(3,1,10,10));
+        backgroundPanel.setBackground(Color.WHITE);
+        backgroundPanel.add(buttonsPanel);
+
+        add(backgroundPanel);
+    }
+
+    // private void abrirMenuGestionDeEventos() {
+    //     MenuGestionEventos frame = new MenuGestionEventos();
+        
+    // }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MenuPrincipal().setVisible(true));
+        
+    }
+}
