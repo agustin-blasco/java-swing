@@ -104,7 +104,7 @@ public class ModelosManager {
     }
 
     public static void guardarAsistentesAEventos(Map<Evento, Set<Asistente>> invitaciones) {
-        List<String> eventosToAsistentes = new ArrayList();
+        List<String> eventosToAsistentes = new ArrayList<String>();
         for (Evento evento : invitaciones.keySet()) {
             for (Asistente asistente : invitaciones.get(evento)) {
                 eventosToAsistentes.add(evento.getId() + "," + asistente.getId());
