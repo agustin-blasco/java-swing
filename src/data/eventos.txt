@@ -1,6 +1,6 @@
-1,Cumpleaños Agustin,Comprar Bebidas y Comida,5,El Palomarr,2026-03-18
+1,Cumpleaños Agustin,Comprar Bebidas y Comida,4,El Palomarr,2026-03-18
 2,Cumpleaños Carla,Cumpleaños numero 33,4,Caseros,2025-10-13
-3,Cumpleaños Carla,Cumpleaños numero 34,0,Caseros,2026-10-13
-4,Entrega TP POO,Entregar el TP con Codigo y Documentacion,0,UADE,2025-06-24
+3,Cumpleaños Carla,Cumpleaños numero 34,2,Caseros,2026-10-13
+4,Defender TP POO,Defender el TP de POO justificando la app,0,MSTeams,2025-07-01
 5,Casamiento Lola & Thiago,Comprar Traje,2,Pilar,2025-11-22
 6,Viaje a NYC,comprar valijas,3,Ezeiza,2025-11-07

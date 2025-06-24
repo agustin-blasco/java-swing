@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +29,9 @@ public class MenuAdministrarInvitados extends JFrame {
         this.asistentes = asistentes;
         this.menuAdministrarEventos = menuAdministrarEventos;
         todasLasInvitaciones = ModelosManager.leerInvitaciones();
-        invitadosAlEventoActual = todasLasInvitaciones.get(evento);
         opcionAsistentes = new HashMap<String, Asistente>();
+
+        obtenerListaDeInvitados(evento);
 
         setTitle("Administrador de Invitados");
         setSize(800, 600);
@@ -95,6 +97,13 @@ public class MenuAdministrarInvitados extends JFrame {
         add(panelPrincipal);
     }
 
+    public void obtenerListaDeInvitados(Evento evento) {
+        invitadosAlEventoActual = todasLasInvitaciones.get(evento);
+        if (invitadosAlEventoActual == null) {
+            invitadosAlEventoActual = new HashSet<>();
+        }
+    }
+
     public void guardarAsistentes(Evento evento) {
 
         todasLasInvitaciones.put(evento, invitadosAlEventoActual);
@@ -129,6 +138,11 @@ public class MenuAdministrarInvitados extends JFrame {
     }
 
     public void poblarListasAsistentes(Set<Asistente> invitados) {
+        // Safety check: ensure invitados is not null
+        if (invitados == null) {
+            invitados = new HashSet<>();
+        }
+        
         for (Asistente asistente : asistentes) {
             String stringInvitado = asistente.toInvitadoList();
             opcionAsistentes.put(stringInvitado, asistente);
