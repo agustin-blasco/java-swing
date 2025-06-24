@@ -138,11 +138,6 @@ public class MenuAdministrarInvitados extends JFrame {
     }
 
     public void poblarListasAsistentes(Set<Asistente> invitados) {
-        // Safety check: ensure invitados is not null
-        if (invitados == null) {
-            invitados = new HashSet<>();
-        }
-        
         for (Asistente asistente : asistentes) {
             String stringInvitado = asistente.toInvitadoList();
             opcionAsistentes.put(stringInvitado, asistente);
