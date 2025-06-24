@@ -16,41 +16,42 @@ public class MenuAdministrarInvitados extends JFrame {
 
     private DefaultListModel<String> asistentesDisponibles;
     private DefaultListModel<String> asistentesAsignados;
-    private JList<String> listaDisponibles;
+    private JList<String> listaAsistentesDisponibles;
     private JList<String> listaInvitados;
-    private JButton btnAsignar;
-    private JButton btnRemover;
-    private JPanel panelDetallesEvento;
-    private TarjetaEventos tarjetaEventoSeleccionado;
     private List<Asistente> asistentes;
-    private Set<Asistente> invitadosAlEventoActual;
     private Map<Evento, Set<Asistente>> todasLasInvitaciones;
+    private Set<Asistente> invitadosAlEventoActual;
     private Map<String, Asistente> opcionAsistentes;
+    private MenuAdministrarEventos menuAdministrarEventos;
     
+    public MenuAdministrarInvitados(Evento evento, List<Asistente> asistentes, MenuAdministrarEventos menuAdministrarEventos) {
+        this.asistentes = asistentes;
+        this.menuAdministrarEventos = menuAdministrarEventos;
+        todasLasInvitaciones = ModelosManager.leerInvitaciones();
+        invitadosAlEventoActual = todasLasInvitaciones.get(evento);
+        opcionAsistentes = new HashMap<String, Asistente>();
 
-    public MenuAdministrarInvitados(Evento evento) {
         setTitle("Administrador de Invitados");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        asistentes = ModelosManager.cargarAsistentes();
-        todasLasInvitaciones = ModelosManager.leerInvitaciones();
-        invitadosAlEventoActual = todasLasInvitaciones.get(evento);
+        crearUI(evento);
+    }
+
+    public void crearUI(Evento evento) {
 
         asistentesDisponibles = new DefaultListModel<>();
         asistentesAsignados = new DefaultListModel<>();
 
-        opcionAsistentes = new HashMap<String, Asistente>();
-
         poblarListasAsistentes(invitadosAlEventoActual);
 
-        listaDisponibles = new JList<>(asistentesDisponibles);
+        listaAsistentesDisponibles = new JList<>(asistentesDisponibles);
         listaInvitados = new JList<>(asistentesAsignados);
 
-        btnAsignar = new JButton("Agregar →");
+        JButton btnAsignar = new JButton("Agregar →");
         btnAsignar.addActionListener(e -> agregarInvitado());
-        btnRemover = new JButton("← Quitar");
+        JButton btnRemover = new JButton("← Quitar");
         btnRemover.addActionListener(e -> eliminarInvitado());
 
         JPanel panelPrincipal = new JPanel();
@@ -59,20 +60,20 @@ public class MenuAdministrarInvitados extends JFrame {
         JPanel panelSeleccionAsistentes = new JPanel(new GridLayout(1, 3, 10, 10));
         panelSeleccionAsistentes.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel panelDisponibles = new JPanel(new BorderLayout());
-        panelDisponibles.add(new JLabel("Asistentes Disponibles"), BorderLayout.NORTH);
-        panelDisponibles.add(new JScrollPane(listaDisponibles), BorderLayout.CENTER);
-        panelDisponibles.add(btnAsignar, BorderLayout.SOUTH);
-
-        tarjetaEventoSeleccionado = new TarjetaEventos();
-        panelDetallesEvento = tarjetaEventoSeleccionado.crearTarjeta(evento);
+        TarjetaEventos tarjetaEventoSeleccionado = new TarjetaEventos();
+        JPanel panelDetallesEvento = tarjetaEventoSeleccionado.crearTarjeta(evento);
         panelDetallesEvento.setLayout(new BoxLayout(panelDetallesEvento, BoxLayout.Y_AXIS));
         panelDetallesEvento.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 50));
 
-        JPanel panelAsignados = new JPanel(new BorderLayout());
-        panelAsignados.add(new JLabel("Invitados al Evento"), BorderLayout.NORTH);
-        panelAsignados.add(new JScrollPane(listaInvitados), BorderLayout.CENTER);
-        panelAsignados.add(btnRemover, BorderLayout.SOUTH);
+        JPanel panelAsistentesDisponibles = new JPanel(new BorderLayout());
+        panelAsistentesDisponibles.add(new JLabel("Asistentes Disponibles"), BorderLayout.NORTH);
+        panelAsistentesDisponibles.add(new JScrollPane(listaAsistentesDisponibles), BorderLayout.CENTER);
+        panelAsistentesDisponibles.add(btnAsignar, BorderLayout.SOUTH);
+
+        JPanel panelAsistentesAsignados = new JPanel(new BorderLayout());
+        panelAsistentesAsignados.add(new JLabel("Invitados al Evento"), BorderLayout.NORTH);
+        panelAsistentesAsignados.add(new JScrollPane(listaInvitados), BorderLayout.CENTER);
+        panelAsistentesAsignados.add(btnRemover, BorderLayout.SOUTH);
 
         JPanel botonesConfirmacionPanel = new JPanel(new GridLayout(1,2, 10, 10));
         botonesConfirmacionPanel.setMaximumSize(new Dimension(1000,100));
@@ -85,8 +86,8 @@ public class MenuAdministrarInvitados extends JFrame {
         btnVolverMenuAnterior.addActionListener(e -> volverMenuAnterior());
         btnGuardar.addActionListener(e -> guardarAsistentes(evento));
 
-        panelSeleccionAsistentes.add(panelDisponibles);
-        panelSeleccionAsistentes.add(panelAsignados);
+        panelSeleccionAsistentes.add(panelAsistentesDisponibles);
+        panelSeleccionAsistentes.add(panelAsistentesAsignados);
         panelPrincipal.add(panelDetallesEvento);
         panelPrincipal.add(panelSeleccionAsistentes);
         panelPrincipal.add(botonesConfirmacionPanel);
@@ -102,6 +103,7 @@ public class MenuAdministrarInvitados extends JFrame {
         evento.setAsistentes(invitadosAlEventoActual.size());
         ModelosManager.guardarEventos(MenuPrincipal.eventos);
         JOptionPane.showMessageDialog(this, "Asistentes Guardados!");
+        menuAdministrarEventos.refrescarTablaEventos();
         dispose();
     }
 
@@ -113,7 +115,7 @@ public class MenuAdministrarInvitados extends JFrame {
     }
 
     public void agregarInvitado() {
-        String asistenteSeleccionado = listaDisponibles.getSelectedValue();
+        String asistenteSeleccionado = listaAsistentesDisponibles.getSelectedValue();
         asistentesDisponibles.removeElement(asistenteSeleccionado);
         asistentesAsignados.addElement(asistenteSeleccionado);
         invitadosAlEventoActual.add(opcionAsistentes.get(asistenteSeleccionado));
@@ -126,7 +128,6 @@ public class MenuAdministrarInvitados extends JFrame {
         invitadosAlEventoActual.remove(opcionAsistentes.get(asistenteSeleccionado));
     }
 
-    
     public void poblarListasAsistentes(Set<Asistente> invitados) {
         for (Asistente asistente : asistentes) {
             String stringInvitado = asistente.toInvitadoList();

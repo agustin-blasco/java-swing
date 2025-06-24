@@ -12,11 +12,6 @@ public class MenuPrincipal extends JFrame {
     
     public static List<Evento> eventos;
     public static List<Asistente> asistentes;
-    private JButton btnAdministraroEventos;
-    private JButton btnAdministrarAsistentes;
-    private JPanel btnPanel;
-    private JPanel eventosCardsPanel;
-    private JLabel lblTituloEventos;
     private TarjetaEventos tarjetaEventos;
 
     public MenuPrincipal() {
@@ -30,29 +25,28 @@ public class MenuPrincipal extends JFrame {
 
         tarjetaEventos = new TarjetaEventos();
 
-        btnPanel = new JPanel();
-        eventosCardsPanel = new JPanel();
+        JPanel panelBotones = new JPanel();
+        JPanel eventosCardsPanel = new JPanel();
         eventosCardsPanel.setLayout(new BoxLayout(eventosCardsPanel, BoxLayout.Y_AXIS));
         eventosCardsPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
-        lblTituloEventos = new JLabel("Próximos Eventos");
+        JLabel lblTituloEventos = new JLabel("Próximos Eventos");
         lblTituloEventos.setFont(new Font("Calibri", Font.BOLD, 25));
         lblTituloEventos.setAlignmentX(Component.CENTER_ALIGNMENT);
         eventosCardsPanel.add(lblTituloEventos);
         eventosCardsPanel.add(tarjetaEventos);
         
-        // Botones Menu Principal
-        btnAdministraroEventos = new JButton("Buscar/Administrar Eventos");
-        btnAdministrarAsistentes = new JButton("Buscar/Administrar Asistentes");
+        JButton btnAdministrarEventos = new JButton("Buscar/Administrar Eventos");
+        JButton btnAdministrarAsistentes = new JButton("Buscar/Administrar Asistentes");
 
-        btnAdministraroEventos.addActionListener(e -> mostrarMenuBusquedaEventos());
+        btnAdministrarEventos.addActionListener(e -> mostrarMenuBusquedaEventos());
         btnAdministrarAsistentes.addActionListener(e -> mostrarMenuAdminAsistentes());
 
-        btnPanel.add(btnAdministraroEventos);
-        btnPanel.add(btnAdministrarAsistentes);
+        panelBotones.add(btnAdministrarEventos);
+        panelBotones.add(btnAdministrarAsistentes);
 
         add(eventosCardsPanel, BorderLayout.CENTER);
-        add(btnPanel, BorderLayout.SOUTH);
+        add(panelBotones, BorderLayout.SOUTH);
 
         mostrarMenuPrincipal();
     }

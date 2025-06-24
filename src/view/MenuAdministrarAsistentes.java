@@ -15,15 +15,8 @@ public class MenuAdministrarAsistentes extends JFrame {
     
     private MenuPrincipal menuPrincipal;
     private JTextField txtBusquedaAsistente;
-    private JButton btnNuevoAsistente;
-    private JButton btnBusquedaAsistente;
-    private JButton btnEditarAsistente;
-    private JButton btnVolverMenu;
     private DefaultTableModel tablaBusqueda;
     private JTable tablaDeAsistentes;
-    private JScrollPane scrollPane;
-    private JPanel panelBusquedaAsistentes;
-    private JPanel panelAdministracionAsistentes;
 
     public MenuAdministrarAsistentes(MenuPrincipal menuPrincipal) {
         this.menuPrincipal = menuPrincipal;
@@ -32,16 +25,20 @@ public class MenuAdministrarAsistentes extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        crearUI();
+    }
+
+    public void crearUI() {
         txtBusquedaAsistente = new JTextField(15);
-        btnBusquedaAsistente = new JButton("Buscar");
-        btnNuevoAsistente= new JButton("Nuevo Asistente");
-        btnEditarAsistente = new JButton("Ver/Editar Asistente");
-        btnVolverMenu = new JButton("Volver al Inicio");
+        JButton btnBusquedaAsistente = new JButton("Buscar");
+        JButton btnNuevoAsistente= new JButton("Nuevo Asistente");
+        JButton btnEditarAsistente = new JButton("Ver/Editar Asistente");
+        JButton btnVolverMenu = new JButton("Volver al Inicio");
         tablaBusqueda = new DefaultTableModel(new Object[] {"ID", "Nombre", "Apellido", "Email"}, 0);
         tablaDeAsistentes = new JTable(tablaBusqueda);
-        scrollPane = new JScrollPane(tablaDeAsistentes);
-        panelBusquedaAsistentes = new JPanel();
-        panelAdministracionAsistentes = new JPanel();
+        JScrollPane scrollPane = new JScrollPane(tablaDeAsistentes);
+        JPanel panelBusquedaAsistentes = new JPanel();
+        JPanel panelAdministracionAsistentes = new JPanel();
         
         btnBusquedaAsistente.addActionListener(e -> buscarAsistente());
         btnNuevoAsistente.addActionListener(e -> crearAsistente());
@@ -57,7 +54,8 @@ public class MenuAdministrarAsistentes extends JFrame {
         panelAdministracionAsistentes.add(btnVolverMenu);
         panelBusquedaAsistentes.add(panelAdministracionAsistentes);
         
-        setLayout(new BorderLayout());
+        refrescarTablaAsistentes();
+
         add(panelBusquedaAsistentes, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -112,15 +110,19 @@ public class MenuAdministrarAsistentes extends JFrame {
         return resultados;
     }
 
-    private int getUltimoID(List<Asistente> asistentes) {
+    public void refrescarTablaAsistentes() { 
+        mostrarResultados(MenuPrincipal.asistentes);
+    }
+
+    public int getUltimoID(List<Asistente> asistentes) {
         return asistentes.get(asistentes.size() - 1).getId() + 1;
     }
 
-    private void crearAsistente() {
+    public void crearAsistente() {
 
         JTextField nombre = new JTextField();
-        JTextArea apellido = new JTextArea();
-        JTextArea email = new JTextArea();
+        JTextField apellido = new JTextField();
+        JTextField email = new JTextField();
 
         Object[] camposNuevoAsistente = {
             "Nombre:", nombre,
@@ -134,11 +136,12 @@ public class MenuAdministrarAsistentes extends JFrame {
             Asistente asistente = new Asistente(getUltimoID(MenuPrincipal.asistentes), nombre.getText(), apellido.getText(), email.getText());
             MenuPrincipal.asistentes.add(asistente);
             ModelosManager.guardarAsistentes(MenuPrincipal.asistentes);
-
         }
+
+        refrescarTablaAsistentes();
     }
 
-    private void editarAsistente() {
+    public void editarAsistente() {
         int fila = tablaDeAsistentes.getSelectedRow();
         if (fila == -1) {
             JOptionPane.showMessageDialog(this, "Seleccione un Asistente!");
@@ -168,7 +171,7 @@ public class MenuAdministrarAsistentes extends JFrame {
             asistente.setEmail(email.getText());
 
             ModelosManager.guardarAsistentes(MenuPrincipal.asistentes);
-            mostrarResultados(MenuPrincipal.asistentes);
+            refrescarTablaAsistentes();
         }
     }
 }

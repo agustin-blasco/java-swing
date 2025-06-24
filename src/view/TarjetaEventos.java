@@ -11,25 +11,20 @@ public class TarjetaEventos extends JPanel {
 
     private int cardActual = 1;
     private int numeroDeEventos;
-    private CardLayout layout;
-    private JButton btnEventoProximo;
-    private JButton btnEventoAnterior;
-    private JPanel mainPanel;
     private JPanel cardPanel;
-    private JPanel buttonPanel;
 
     public TarjetaEventos() {
 
-        mainPanel = new JPanel(new GridLayout(2,1,10,10));
+        JPanel mainPanel = new JPanel(new GridLayout(2,1,10,10));
+        JPanel buttonPanel = new JPanel();
         cardPanel = new JPanel();
-        buttonPanel = new JPanel();
 
-        layout = new CardLayout();
+        CardLayout layout = new CardLayout();
         cardPanel.setLayout(layout);
 
-        btnEventoProximo = new JButton("→");
+        JButton btnEventoProximo = new JButton("→");
         btnEventoProximo.setFont(new Font("Arial", Font.BOLD, 12));
-        btnEventoAnterior = new JButton("←");
+        JButton btnEventoAnterior = new JButton("←");
         btnEventoAnterior.setFont(new Font("Arial", Font.BOLD, 12));
 
         buttonPanel.add(btnEventoAnterior);
@@ -46,7 +41,6 @@ public class TarjetaEventos extends JPanel {
             if (cardActual > 1) {
                 cardActual -= 1;
                 layout.show(cardPanel, "" + (cardActual));
-                // btnEventoProximo.setEnabled(true);
             }
         });
 
@@ -70,8 +64,6 @@ public class TarjetaEventos extends JPanel {
         numeroDeEventos = eventos.size();
         
         if (numeroDeEventos < 1) {
-            btnEventoProximo.setEnabled(false);
-            btnEventoAnterior.setEnabled(false);
             JPanel panelEvento = new JPanel(new GridLayout(5, 1, 10, 10));
             JLabel sinEventosLabel = new JLabel("No hay ningún evento próximo :(");
             sinEventosLabel.setHorizontalAlignment(SwingConstants.CENTER);

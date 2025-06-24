@@ -40,20 +40,6 @@ public class ModelosManager {
         return asistentes;
     }
 
-    public static Map<Integer, Asistente> cargarAsistentesHM() {
-        Map<Integer, Asistente> asistentes = new HashMap<Integer, Asistente>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO_ASISTENTES))) {
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                Asistente asistente = Asistente.fromString(linea);
-                if (asistente != null) asistentes.put(asistente.getId(), asistente);
-            }
-        } catch (IOException e) {
-            System.out.println("Archivo no encontrado.");
-        }
-        return asistentes;
-    }
-
     public static void guardarAsistentes(List<Asistente> asistentes) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO_ASISTENTES))) {
             for (Asistente asistente : asistentes) {

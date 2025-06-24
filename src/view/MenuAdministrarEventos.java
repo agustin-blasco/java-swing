@@ -18,16 +18,8 @@ public class MenuAdministrarEventos extends JFrame {
     
     private MenuPrincipal menuPrincipal;
     private JTextField txtBusquedaEvento;
-    private JButton btnNuevoEvento;
-    private JButton btnBusquedaEvento;
-    private JButton btnEditarEvento;
-    private JButton btnInvitaciones;
-    private JButton btnVolverMenu;
     private DefaultTableModel tablaBusqueda;
     private JTable tablaDeEventos;
-    private JScrollPane scrollPane;
-    private JPanel panelBusquedaEventos;
-    private JPanel panelAdministracionEventos;
 
     public MenuAdministrarEventos(MenuPrincipal menuPrincipal) {
         this.menuPrincipal = menuPrincipal;
@@ -36,17 +28,21 @@ public class MenuAdministrarEventos extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        crearUI();
+    }
+
+    public void crearUI() {
         txtBusquedaEvento = new JTextField(15);
-        btnBusquedaEvento = new JButton("Buscar");
-        btnNuevoEvento = new JButton("Nuevo Evento");
-        btnEditarEvento = new JButton("Ver/Editar Evento");
-        btnInvitaciones = new JButton("Agregar Invitados");
-        btnVolverMenu = new JButton("Volver al Inicio");
+        JButton btnBusquedaEvento = new JButton("Buscar");
+        JButton btnNuevoEvento = new JButton("Nuevo Evento");
+        JButton btnEditarEvento = new JButton("Ver o Editar Evento");
+        JButton btnInvitaciones = new JButton("Agregar o Quitar Invitados");
+        JButton btnVolverMenu = new JButton("Volver al Inicio");
         tablaBusqueda = new DefaultTableModel(new Object[] {"ID", "Nombre", "Descripción", "Invitados", "Ubicación", "Fecha"}, 0);
         tablaDeEventos = new JTable(tablaBusqueda);
-        scrollPane = new JScrollPane(tablaDeEventos);
-        panelBusquedaEventos = new JPanel();
-        panelAdministracionEventos = new JPanel();
+        JScrollPane scrollPane = new JScrollPane(tablaDeEventos);
+        JPanel panelBusquedaEventos = new JPanel();
+        JPanel panelAdministracionEventos = new JPanel();
         
         btnBusquedaEvento.addActionListener(e -> buscarEvento());
         btnNuevoEvento.addActionListener(e -> crearEvento());
@@ -64,11 +60,17 @@ public class MenuAdministrarEventos extends JFrame {
         panelAdministracionEventos.add(btnVolverMenu);
         panelBusquedaEventos.add(panelAdministracionEventos);
         
+        refrescarTablaEventos();
+
         setLayout(new BorderLayout());
         add(panelBusquedaEventos, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+
+    public void refrescarTablaEventos() { 
+        mostrarResultados(MenuPrincipal.eventos);
     }
 
     public void volverAlMenuPrincipal() {
@@ -122,11 +124,11 @@ public class MenuAdministrarEventos extends JFrame {
         return resultados;
     }
 
-    private int getUltimoID(List<Evento> eventos) {
+    public int getUltimoID(List<Evento> eventos) {
         return eventos.get(eventos.size() - 1).getId() + 1;
     }
 
-    private boolean esFechaValida(String fecha) {
+    public boolean esFechaValida(String fecha) {
         LocalDate fechaParsed;
         try {
             fechaParsed = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -140,7 +142,7 @@ public class MenuAdministrarEventos extends JFrame {
         }
     }
 
-    private void crearEvento() {
+    public void crearEvento() {
 
         JTextField nombre = new JTextField();
         JTextArea descripcion = new JTextArea();
@@ -150,8 +152,8 @@ public class MenuAdministrarEventos extends JFrame {
 
         Object[] camposNuevoEvento = {
             "Nombre del Evento:", nombre,
-            "Descripcion:", descripcion,
-            "Ubicacion:", ubicacion,
+            "Descripción:", descripcion,
+            "Ubicación:", ubicacion,
             "Fecha (aaaa-mm-dd):", fecha,
         };
 
@@ -167,27 +169,33 @@ public class MenuAdministrarEventos extends JFrame {
             } else {
                 return;
             }
+            refrescarTablaEventos();
         }
     }
 
-    private void abrirMenuInvitados() {
-        int fila = tablaDeEventos.getSelectedRow();
+    public boolean validarFilaSeleccionada(int fila) {
         if (fila == -1) {
             JOptionPane.showMessageDialog(this, "Seleccione un Evento!");
+        }
+        return fila == -1;
+    }
+
+    public void abrirMenuInvitados() {
+        int fila = tablaDeEventos.getSelectedRow();
+        if (validarFilaSeleccionada(fila)) {
             return;
         }
         
         int idEvento = Integer.parseInt(tablaDeEventos.getValueAt(fila, 0).toString()) - 1;
         Evento evento = MenuPrincipal.eventos.get(idEvento);
 
-        MenuAdministrarInvitados menuInvitados = new MenuAdministrarInvitados(evento);
+        MenuAdministrarInvitados menuInvitados = new MenuAdministrarInvitados(evento, MenuPrincipal.asistentes, this);
         menuInvitados.setVisible(true);
     }
 
-    private void editarEvento() {
+    public void editarEvento() {
         int fila = tablaDeEventos.getSelectedRow();
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un Evento!");
+        if (validarFilaSeleccionada(fila)) {
             return;
         }
         
@@ -230,7 +238,7 @@ public class MenuAdministrarEventos extends JFrame {
             evento.setFecha(nuevaFecha);
 
             ModelosManager.guardarEventos(MenuPrincipal.eventos);
-            mostrarResultados(MenuPrincipal.eventos);
+            refrescarTablaEventos();
         }
     }
 }
